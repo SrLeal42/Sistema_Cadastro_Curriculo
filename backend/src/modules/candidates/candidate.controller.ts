@@ -25,17 +25,22 @@ export const createCandidate = async (req: Request, res: Response): Promise<void
       }, ["Id"]);
 
     res.status(201).json({ success: true, id: result[0]?.Id || result[0] });
+
   } catch (error: any) {
+
     if (error.name === "ZodError") {
       res.status(400).json({ error: "Erro de validação", details: error.errors });
     } else {
       console.error(error);
       res.status(500).json({ error: "Erro interno no servidor" });
     }
+
   }
+
 };
 
 export const getCandidates = async (req: Request, res: Response): Promise<void> => {
+
   try {
     const candidates = await db("Candidates").select("*").orderBy("CreatedAt", "desc");
     res.json(candidates);
@@ -43,9 +48,11 @@ export const getCandidates = async (req: Request, res: Response): Promise<void> 
     console.error(error);
     res.status(500).json({ error: "Erro interno no servidor" });
   }
+
 };
 
 export const getCandidateById = async (req: Request, res: Response): Promise<void> => {
+
   try {
     const { id } = req.params;
     const candidate = await db("Candidates").where({ Id: id }).first();
@@ -60,4 +67,5 @@ export const getCandidateById = async (req: Request, res: Response): Promise<voi
     console.error(error);
     res.status(500).json({ error: "Erro interno no servidor" });
   }
+
 };
