@@ -1,0 +1,17 @@
+.app-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app-header {
+  margin-bottom: 2rem;
+}
+
+.app-title {
+  color: var(--accent-primary);
+}
+
+.app-subtitle {
+  color: var(--text-secondary);
+}

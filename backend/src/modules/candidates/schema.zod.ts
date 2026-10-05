@@ -7,3 +7,5 @@ export const candidateSchema = z.object({
   desiredRole: z.string().optional(),
   summary: z.string().optional()
 });
+
+export type CandidateFormData = z.infer<typeof candidateSchema>;
