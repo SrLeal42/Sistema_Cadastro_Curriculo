@@ -25,12 +25,6 @@ function App() {
       <BrowserRouter>
 
         <div className="app-container">
-
-          <header className="app-header">
-            <h1 className="app-title">Talent Hub</h1>
-            <p className="app-subtitle">Portal de recrutamento e cadastro de candidatos</p>
-          </header>
-
           <main>
             <CandidateForm />
             <CandidateList />
