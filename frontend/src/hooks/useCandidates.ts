@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchCandidates, fetchCandidateById, createCandidate, type Candidate } from "../services/api";
+import { fetchCandidates, fetchCandidateById, createCandidate, parsePdfRequest, type Candidate } from "../services/api";
+
+export const useParsePdf = () => {
+  return useMutation({
+    mutationFn: (file: File) => parsePdfRequest(file),
+  });
+};
 
 export const useCandidates = () => {
   return useQuery<Candidate[], Error>({

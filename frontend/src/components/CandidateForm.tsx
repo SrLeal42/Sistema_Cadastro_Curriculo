@@ -2,21 +2,58 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useCreateCandidate } from '../hooks/useCandidates';
+import { useCreateCandidate, useParsePdf } from '../hooks/useCandidates';
 
-import { Send, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Send, AlertCircle, CheckCircle2, UploadCloud, Loader2 } from 'lucide-react';
 import { candidateSchema, type CandidateFormData } from '../../../backend/src/modules/candidates/schema.zod';
 
 import styles from './CandidateForm.module.css';
 
 export const CandidateForm: React.FC = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CandidateFormData>({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CandidateFormData>({
     resolver: zodResolver(candidateSchema)
   });
 
   const createCandidate = useCreateCandidate();
+  const parsePdf = useParsePdf();
+
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    parsePdf.mutate(file, {
+      onSuccess: (data) => {
+
+        if (data.fullName) setValue('fullName', data.fullName, { shouldValidate: true });
+
+        if (data.email) setValue('email', data.email, { shouldValidate: true });
+
+        if (data.phone) {
+          let value = data.phone.replace(/\D/g, "");
+          if (value.length > 11) value = value.slice(0, 11);
+          if (value.length > 2) value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+          if (value.length > 9) value = `${value.slice(0, 10)}-${value.slice(10)}`;
+          setValue('phone', value, { shouldValidate: true });
+        }
+
+        if (data.summary) setValue('summary', data.summary, { shouldValidate: true });
+
+        setSuccessMsg("Currículo lido com sucesso!");
+        e.target.value = '';
+
+      },
+      onError: (error: any) => {
+        setErrorMsg(error.message || "Erro ao processar o arquivo.");
+        e.target.value = '';
+      }
+    });
+  };
 
   const onSubmit = (data: CandidateFormData) => {
     setErrorMsg("");
@@ -50,6 +87,39 @@ export const CandidateForm: React.FC = () => {
         Cadastro de Candidato
       </h2>
 
+      <div className={styles.dropzone} onClick={() => document.getElementById('pdf-upload')?.click()}>
+        <input
+          type="file"
+          id="pdf-upload"
+          accept=".pdf"
+          className={styles.fileInput}
+          onChange={handleFileChange}
+          disabled={parsePdf.isPending}
+        />
+
+        {parsePdf.isPending ? (
+          <>
+            <div className={styles.dropzoneIcon}>
+              <Loader2 size={32} className={styles.animateSpin} />
+            </div>
+            <div className={styles.dropzoneText}>
+              <strong>Extraindo dados do currículo...</strong>
+              <br />Aguarde um instante
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={styles.dropzoneIcon}>
+              <UploadCloud size={32} />
+            </div>
+            <div className={styles.dropzoneText}>
+              <strong>Clique aqui para anexar um Currículo (PDF)</strong>
+              <br />E preencheremos os campos magicamente para você
+            </div>
+          </>
+        )}
+      </div>
+
       {successMsg && (
         <div className={styles.successMessage}>
           <CheckCircle2 size={20} />
@@ -81,10 +151,10 @@ export const CandidateForm: React.FC = () => {
         <div className={styles.row}>
           <div>
             <label>Telefone</label>
-            <input 
-              type="text" 
-              placeholder="(11) 99999-9999" 
-              {...register("phone")} 
+            <input
+              type="text"
+              placeholder="(11) 99999-9999"
+              {...register("phone")}
               onChange={(e) => {
                 let value = e.target.value.replace(/\D/g, "");
                 if (value.length > 11) value = value.slice(0, 11);
