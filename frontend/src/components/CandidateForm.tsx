@@ -81,11 +81,25 @@ export const CandidateForm: React.FC = () => {
         <div className={styles.row}>
           <div>
             <label>Telefone</label>
-            <input type="text" placeholder="(11) 99999-9999" {...register("phone")} />
+            <input 
+              type="text" 
+              placeholder="(11) 99999-9999" 
+              {...register("phone")} 
+              onChange={(e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                if (value.length > 11) value = value.slice(0, 11);
+                if (value.length > 2) value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                if (value.length > 9) value = `${value.slice(0, 10)}-${value.slice(10)}`;
+                e.target.value = value;
+                register("phone").onChange(e); // Mantém o vínculo com o react-hook-form
+              }}
+            />
+            {errors.phone && <span className={styles.errorText}><AlertCircle size={14} /> {errors.phone.message}</span>}
           </div>
           <div>
             <label>Cargo Desejado</label>
             <input type="text" placeholder="Ex: Desenvolvedor Frontend" {...register("desiredRole")} />
+            {errors.desiredRole && <span className={styles.errorText}><AlertCircle size={14} /> {errors.desiredRole.message}</span>}
           </div>
         </div>
 

@@ -1,0 +1,66 @@
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  padding: 1.5rem;
+  transition: var(--transition);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-glow);
+  box-shadow: var(--shadow-glow);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.role {
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
